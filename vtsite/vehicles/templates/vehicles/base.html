@@ -1,15 +1,18 @@
 <!DOCTYPE html>
+{% load staticfiles %}
+
 <html>
 <head>
   <title>Vehicle Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/vehicles.css' %}">
 
 </head>
 
 <body>
-  <div class="row">
+  <div>
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -21,10 +24,6 @@
           <a class="navbar-brand" href="#">Food Bank</a>
         </div>
         <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Check In</a></li>
-            <li><a href="#about">Check Out</a></li>
-          </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class=""><a href="#">Admin</a></li>
           </ul>
@@ -32,9 +31,14 @@
       </div>
     </div>
 
-    <div class="main" style="margin-top: 50px; margin-left: 30px;">
+    <div class="main">
       {% block content %}
       {% endblock %}
+    </div>
+
+    <div>
+      <img class="logo" src="{% static 'img/logo.png' %}">
+      <p class="footer-text">Fighting hunger in 34 counties...<br/>so no one goes hungry.</p>
     </div>
 
   </div>

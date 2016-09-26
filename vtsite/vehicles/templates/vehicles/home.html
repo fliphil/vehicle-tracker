@@ -1,11 +1,12 @@
 {% extends 'vehicles/base.html' %}
 
 {% block content %}
-<div class="col-xs-8 col-xs-offset-2">
-  <a href="checkin"><h1>Check In</h1></a>
-</div>
-<br/>
-<div class="col-xs-8 col-xs-offset-2">
-  <a href="checkout"><h1>Check Out</h1></a>
+<div>
+  <div class="col-xs-offset-1 col-xs-10">
+    <h3>Welcome to the Food Bank Vehicle Tracker<br/>What would you like to do?</h3>
+    <br/>
+    <a href="checkin" role="button" class="btn btn-primary">Check In</a>
+    <a href="checkout" role="button" class="btn btn-primary">Check Out</a>
+  </div>
 </div>
 {% endblock %}
