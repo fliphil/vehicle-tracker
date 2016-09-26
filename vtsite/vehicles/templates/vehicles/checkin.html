@@ -1,8 +1,11 @@
 {% extends 'vehicles/base.html' %}
 
 {% block content %}
-    <h1>Check in</h1>
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
+<div class="checkin-container">
+  <h1>Check in</h1>
+  {% csrf_token %}
+  {{ form }}
+</div><br/>
+<input id="checkin-submit" type="submit" value="Submit" />
+
 {% endblock %}
