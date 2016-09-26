@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Vehicle(models.Model):
-    vechile_desc models.CharField(max_length=250)
+    vehicle_desc = models.CharField(max_length=250)
 
 class User(models.Model):
     user_full_name = models.CharField(max_length=50)
