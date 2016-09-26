@@ -1,0 +1,33 @@
+@import url('http://twitter.github.com/bootstrap/assets/css/bootstrap.css');
+.main {
+  margin-top: 60px;
+  text-align: center;
+}
+
+.logo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30vw;
+  max-width: 140px;
+  float: left;
+}
+
+.footer-text {
+  text-align: right;
+  position: absolute;
+  bottom: 0;
+  right: 20px;
+}
+
+.btn {
+  font-size: 17px;
+  margin: 1vw;
+  background-color: #568E2D;
+  border-color: #568E2D;
+}
+
+.btn:hover {
+  background-color: #488120;
+  border-color: #488120;
+}
