@@ -1,5 +1,8 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the vehicle index.")
+    return render(request, "vehicles/index.html", {})
+
+def test(request, number):
+    return render(request, 'vehicles/test.html', {'number': number})
