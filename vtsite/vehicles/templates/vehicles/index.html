@@ -1,12 +1,17 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
 <head>
   <title>Vehicle Tracker</title>
+
+  <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
 </head>
-
-
 
 <body>
   <h1>Test template</h1>
+  {% block content %}
+
+  {% endblock %}
+  <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 </body>
 </html>
