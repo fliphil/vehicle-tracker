@@ -3,10 +3,14 @@ from django.db import models
 # Create your models here.
 class Vehicle(models.Model):
     vehicle_desc = models.CharField(max_length=250)
+    def __str__(self):
+        return self.vehicle_desc
 
 class User(models.Model):
     user_full_name = models.CharField(max_length=50)
     user_password_hash = models.CharField(max_length=64)
+    def __str__(self):
+        return self.user_full_name
 
 class VehicleReservation(models.Model):
     YES_NO = (
