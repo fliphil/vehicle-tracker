@@ -10,11 +10,7 @@ def index(request):
     return render(request, 'vehicles/home.html', {})
 
 
-def test(request, number):
-    return render(request, 'vehicles/test.html', {'number': number})
-
-
-def checkin(request):
+def checkout_vehicle(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = DepartureForm(request.POST)
@@ -41,8 +37,8 @@ def checkin(request):
     else:
         form = DepartureForm()
 
-    return render(request, 'vehicles/checkin.html', {'form': form})
+    return render(request, 'vehicles/checkout_vehicle.html', {'form': form})
 
 
-def checkout(request):
-    return render(request, 'vehicles/checkout.html', {})
+def checkin_vehicle(request):
+    return render(request, 'vehicles/checkin_vehicle.html', {})
