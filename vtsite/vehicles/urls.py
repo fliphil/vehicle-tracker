@@ -5,9 +5,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^(?P<number>[0-9]+)/$', views.test, name='test'),
-    url(r'^checkin$', views.checkin, name='checkin'),
-    url(r'^checkout$', views.checkout, name='checkout'),
+    url(r'^checkout_vehicle$', views.checkout_vehicle, name='checkout_vehicle'),
+    url(r'^checkin_vehicle$', views.checkin_vehicle, name='checkin_vehicle'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

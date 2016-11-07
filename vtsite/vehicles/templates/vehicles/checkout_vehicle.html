@@ -1,0 +1,13 @@
+{% extends 'vehicles/base.html' %}
+
+{% block content %}
+<div class="checkout-container">
+    <h3>Check-out Vehicle</h3>
+    <form action="/vehicles/checkout_vehicle" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input id="checkout-submit" type="submit" value="Submit" />
+    </form>
+</div><br/>
+
+{% endblock %}
