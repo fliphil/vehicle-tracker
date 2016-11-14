@@ -3,6 +3,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from . import views
 
+
+app_name = 'vehicles'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^checkout_vehicle$', views.checkout_vehicle, name='checkout_vehicle'),
