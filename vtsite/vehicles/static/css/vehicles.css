@@ -31,16 +31,6 @@
   border-color: #488120;
 }
 
-.checkin-container input {
-  margin-left: 2%;
-  width: 60%;
-}
-
-.checkin-container label {
-  width: 20%;
-  text-align: right;
-}
-
-#checkin-submit {
-  width: 40%;
+li {
+  list-style: none;
 }
