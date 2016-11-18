@@ -1,11 +1,13 @@
-{% extends 'vehicles/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h3>Check-in Vehicle</h3>
-<form action="{% url 'vehicles:checkin_vehicle' %}" method="post">
-    {% csrf_token %}
-    {{ form.as_ul }}
+<div class="container">
+    <h3>Check-in Vehicle</h3>
+    <form action="{% url 'vehicles:checkin_vehicle' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_ul }}
 
-    <input id="checkin-submit" type="submit" value="Submit" />
-</form>
+        <input id="checkin-submit" type="submit" value="Submit" />
+    </form>
+</div>
 {% endblock %}

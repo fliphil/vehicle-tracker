@@ -1,12 +1,18 @@
-{% extends 'vehicles/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div>
-  <div class="col-xs-offset-1 col-xs-10">
-    <h3>Welcome to the Food Bank Vehicle Tracker<br/>What would you like to do?</h3>
-    <br/>
-    <a href="{% url 'vehicles:checkout_vehicle' %}" role="button" class="btn btn-primary">Check-out Vehicle</a>
-    <a href="{% url 'vehicles:checkin_vehicle' %}" role="button" class="btn btn-primary">Check-in Vehicle</a>
- </div>
+    <div class="row">
+        <div class="col-xs-offset-1 col-xs-10">
+          <h3>Welcome to the Food Bank Vehicle Tracker</h3>
+       </div>
+    </div>
+    <!-- {% csrf_token %} -->
+
+    <!-- {% if not user_status.on_trip %}
+       {% include "vehicles/checkout_vehicle.html" %}
+    {% else %}
+       {% include "vehicles/checkout_vehicle.html" %}
+    {% endif %} -->
 </div>
 {% endblock %}

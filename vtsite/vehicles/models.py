@@ -62,15 +62,16 @@ class VehicleStatus(models.Model):
     Track various status items related to a vehicle
     """
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
-    on_trip = models.BooleanField
+    on_trip = models.BooleanField(default=False)
 
 
 class UserStatus(models.Model):
     """
     Track various status items related to a user
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    on_trip = models.BooleanField
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=20, default="")
+    on_trip = models.BooleanField(default=False)
 
 
 class TripReservation(models.Model):
@@ -95,7 +96,3 @@ class TripReservation(models.Model):
     vehicle_clean = models.CharField(max_length=1, choices=YES_NO)
     post_accident = models.CharField(max_length=250)
     """
-
-
-
-

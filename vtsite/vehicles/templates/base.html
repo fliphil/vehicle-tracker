@@ -25,7 +25,10 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class=""><a href="#">Admin</a></li>
+            {% if user.is_superuser %}
+            <li class=""><a href="/admin">Admin</a></li>
+            {% endif %}
+            <li class=""><a href="/logout">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

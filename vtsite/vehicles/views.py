@@ -3,11 +3,22 @@ from django.http import HttpResponseRedirect
 from .forms import DepartureForm
 from .forms import ArrivalForm
 from .models import Vehicle
-from .models import User
+from .models import UserStatus
 from .models import TripReservation
 
 
 def index(request):
+    if request.user.is_authenticated:
+        try:
+            user_status = UserStatus.objects.get(username=request.user.username)
+        except:
+            user_status = UserStatus(username=request.user.username)
+
+        if user_status.on_trip == False:
+            return HttpResponseRedirect('/vehicles/checkout_vehicle')
+        else:
+            return HttpResponseRedirect('/vehicles/checkin_vehicle)')
+
     return render(request, 'vehicles/home.html', {})
 
 
@@ -75,21 +86,25 @@ def checkout_vehicle(request):
     :param request: HTTP request from client
     :return: HttpResponse with reservation status page
     """
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = DepartureForm(request.POST)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            # create a form instance and populate it with data from the request:
+            form = DepartureForm(request.POST)
 
-        # handle the form data
-        receive_checkout_info(form)
+            # handle the form data
+            receive_checkout_info(form)
 
-        # redirect to a new URL:
-        return HttpResponseRedirect('/vehicles')
+            # redirect to a new URL:
+            return HttpResponseRedirect('/vehicles')
 
-    # if a GET (or any other method) we'll create a blank form
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            # user_status = UserStatus.objects.get(username=request.user.username)
+            form = DepartureForm()
+
+        return render(request, 'vehicles/checkout_vehicle.html', {'form': form})
     else:
-        form = DepartureForm()
-
-    return render(request, 'vehicles/checkout_vehicle.html', {'form': form})
+        return HttpResponseRedirect('/')
 
 
 def checkin_vehicle(request):
@@ -98,17 +113,20 @@ def checkin_vehicle(request):
     :param request: HTTP request from client
     :return: HttpResponse with reservation status page
     """
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = ArrivalForm(request.POST)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            # create a form instance and populate it with data from the request:
+            form = ArrivalForm(request.POST)
 
-        # handle the form data
-        receive_checkin_info(form)
+            # handle the form data
+            receive_checkin_info(form)
 
-        # redirect to a new URL:
-        return HttpResponseRedirect('/vehicles')
+            # redirect to a new URL:
+            return HttpResponseRedirect('/vehicles')
 
-    # if a GET (or any other method) we'll create a blank form
+        # if a GET (or any other method) we'll create a blank form
+        else:
+            form = ArrivalForm()
+        return render(request, 'vehicles/checkin_vehicle.html', {'form': form})
     else:
-        form = ArrivalForm()
-    return render(request, 'vehicles/checkin_vehicle.html', {'form': form})
+        return HttpResponseRedirect('/')
