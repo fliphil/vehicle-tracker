@@ -34,3 +34,31 @@
 li {
   list-style: none;
 }
+
+table {
+  margin: auto;
+  margin-bottom: 2vw;
+}
+
+tbody {
+  display: flex;
+  flex-direction: column;
+}
+
+tr {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+th {
+  align-self: flex-start;
+}
+
+td {
+  align-self: flex-end;
+}
+
+th label {
+  margin-bottom: 0;
+}

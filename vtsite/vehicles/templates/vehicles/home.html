@@ -7,12 +7,36 @@
           <h3>Welcome to the Food Bank Vehicle Tracker</h3>
        </div>
     </div>
-    <!-- {% csrf_token %} -->
 
-    <!-- {% if not user_status.on_trip %}
-       {% include "vehicles/checkout_vehicle.html" %}
-    {% else %}
-       {% include "vehicles/checkout_vehicle.html" %}
-    {% endif %} -->
+    <div class="form-container">
+
+        <p>Step {{ wizard.steps.current|add:"1" }} of {{ wizard.steps.count }}</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <table>
+              {{ wizard.management_form }}
+              {% if wizard.form.forms %}
+                  {{ wizard.form.management_form }}
+                  {% for form in wizard.form.forms %}
+                      {{ form }}
+                  {% endfor %}
+              {% else %}
+                  {{ wizard.form }}
+              {% endif %}
+            </table>
+
+            {% if wizard.steps.prev %}
+            <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Back</button>
+            {% endif %}
+
+            {% if wizard.steps.next %}
+            <input type="submit" value="Next"/>
+            {% else %}
+            <input type="submit" value="Submit"/>
+            {% endif %}
+
+        </form>
+    </div>
+
 </div>
 {% endblock %}

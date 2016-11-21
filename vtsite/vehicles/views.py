@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import DepartureForm
-from .forms import ArrivalForm
 from .models import Vehicle
 from .models import UserStatus
 from .models import TripReservation
-
+from formtools.wizard.views import SessionWizardView
 
 def index(request):
     if request.user.is_authenticated:
@@ -15,118 +13,51 @@ def index(request):
             user_status = UserStatus(username=request.user.username)
 
         if user_status.on_trip == False:
-            return HttpResponseRedirect('/vehicles/checkout_vehicle')
+            return HttpResponseRedirect('/vehicles/depart')
         else:
-            return HttpResponseRedirect('/vehicles/checkin_vehicle)')
+            return HttpResponseRedirect('/vehicles/return')
 
     return render(request, 'vehicles/home.html', {})
 
 
-def receive_checkout_info(form):
+def process_departure_form(form_dict):
     """
-    Handle the form received from the checkout_vehicle post
+    Handle the form received from the departure post
     request. Do some validation and then record the data in a
     new VehicleReservation table entry.
-    :param form: Contains the form data.
+    :param form_dict: Contains the form data.
     :return:
     """
-    # check whether it's valid:
-    if form.is_valid():
-        # process the data in form.cleaned_data as required
-        vehicle_form_data = form.cleaned_data['vehicle']
-        user_form_data = form.cleaned_data['user']
-        dest_form_data = form.cleaned_data['destination']
-        odo_form_data = form.cleaned_data['odometer']
-        fuel_form_data = form.cleaned_data['isFuelFull']
-        tire_form_data = form.cleaned_data['wereTiresInspected']
-        damage_form_data = form.cleaned_data['completedDamageInspection']
+    vehicle_form_data = form_dict[0].cleaned_data['vehicle'] # because the Vehicle form is the first in the list of forms... will clean this up later
+    dest_form_data = form_dict[1].cleaned_data['destination']
+    odo_form_data = form_dict[2].cleaned_data['odometer']
+    fuel_form_data = form_dict[2].cleaned_data['is_fuel_full']
+    tire_form_data = form_dict[2].cleaned_data['were_tires_inspected']
+    damage_form_data = form_dict[2].cleaned_data['completed_damage_inspection']
 
-        # Lookup the vehicle and user from database
-        vehicle_entry = Vehicle.objects.get(vehicle_desc=vehicle_form_data)
-        user_entry = User.objects.get(user_name=user_form_data)
+    # Lookup the vehicle and user from database
+    vehicle_entry = Vehicle.objects.get(vehicle_desc=vehicle_form_data)
 
-        # Create a new reservation
-        reservation = TripReservation(vehicle=vehicle_entry, user=user_entry,
-                                      odometer=odo_form_data)
-        reservation.save()
+    # Create a new reservation
+    reservation = TripReservation(vehicle=vehicle_entry,
+                                  odometer=odo_form_data)
+    reservation.save()
 
-def receive_checkin_info(form):
-    """
-    Handle the form received from the checkout_vehicle post
-    request. Do some validation and then record the data in a
-    new VehicleReservation table entry.
-    :param form: Contains the form data.
-    :return:
-    """
-    # check whether it's valid:
-    if form.is_valid():
-        # process the data in form.cleaned_data as required
-        vehicle_form_data = form.cleaned_data['vehicle']
-        user_form_data = form.cleaned_data['user']
-        dest_form_data = form.cleaned_data['destination']
-        odo_form_data = form.cleaned_data['odometer']
-        fuel_form_data = form.cleaned_data['isFuelFull']
-        trash_form_data = form.cleaned_data['trash']
-        damage_form_data = form.cleaned_data['damageOrMechanicalProblems']
-        comments_form_data = form.cleaned_data['comments']
-
-        # Lookup the vehicle and user from database
-        vehicle_entry = Vehicle.objects.get(vehicle_desc=vehicle_form_data)
-        user_entry = User.objects.get(user_name=user_form_data)
-
-        # Create a new reservation
-        reservation = TripReservation(vehicle=vehicle_entry, user=user_entry,
-                                      odometer=odo_form_data)
-        reservation.save()
+def process_return_form(form_list):
+    return
 
 
-def checkout_vehicle(request):
-    """
-    Run this function after a vehicles/checkout_vehicles url redirect.
-    :param request: HTTP request from client
-    :return: HttpResponse with reservation status page
-    """
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            # create a form instance and populate it with data from the request:
-            form = DepartureForm(request.POST)
+class DepartureFormWizard(SessionWizardView):
+    template_name = "vehicles/home.html"
 
-            # handle the form data
-            receive_checkout_info(form)
-
-            # redirect to a new URL:
-            return HttpResponseRedirect('/vehicles')
-
-        # if a GET (or any other method) we'll create a blank form
-        else:
-            # user_status = UserStatus.objects.get(username=request.user.username)
-            form = DepartureForm()
-
-        return render(request, 'vehicles/checkout_vehicle.html', {'form': form})
-    else:
+    def done(self, form_list, **kwargs):
+        process_departure_form(form_list)
         return HttpResponseRedirect('/')
 
 
-def checkin_vehicle(request):
-    """
-    Run this function after a vehicles/checkin_vehicles url redirect.
-    :param request: HTTP request from client
-    :return: HttpResponse with reservation status page
-    """
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            # create a form instance and populate it with data from the request:
-            form = ArrivalForm(request.POST)
+class ReturnFormWizard(SessionWizardView):
+    template_name = "vehicles/home.html"
 
-            # handle the form data
-            receive_checkin_info(form)
-
-            # redirect to a new URL:
-            return HttpResponseRedirect('/vehicles')
-
-        # if a GET (or any other method) we'll create a blank form
-        else:
-            form = ArrivalForm()
-        return render(request, 'vehicles/checkin_vehicle.html', {'form': form})
-    else:
+    def done(self, form_list, form_dict, **kwargs):
+        process_return_form(form_dict)
         return HttpResponseRedirect('/')

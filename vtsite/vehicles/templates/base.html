@@ -28,7 +28,9 @@
             {% if user.is_superuser %}
             <li class=""><a href="/admin">Admin</a></li>
             {% endif %}
+            {% if user.is_authenticated %}
             <li class=""><a href="/logout">Logout</a></li>
+            {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
       </div>
