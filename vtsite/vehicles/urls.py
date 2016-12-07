@@ -2,8 +2,8 @@ from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from . import views
-from forms import VehicleForm, TripForm, CheckForm, PostCheckForm
-from views import DepartureFormWizard, ReturnFormWizard
+from .forms import VehicleForm, TripForm, CheckForm, PostCheckForm
+from .views import DepartureFormWizard, ReturnFormWizard
 
 
 app_name = 'vehicles'
