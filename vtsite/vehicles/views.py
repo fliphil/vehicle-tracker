@@ -11,6 +11,7 @@ def index(request):
             user_status = UserStatus.objects.get(username=request.user.username)
         except:
             user_status = UserStatus(username=request.user.username)
+            user_status.save()
 
         if user_status.on_trip == False:
             return HttpResponseRedirect('/vehicles/depart')

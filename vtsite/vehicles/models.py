@@ -6,6 +6,7 @@ class Vehicle(models.Model):
     """
     # Unique description of the vehicle
     vehicle_desc = models.CharField(max_length=250)
+    # vehicle_photo = models.ImageField(upload_to=None)
 
     def __str__(self):
         return self.vehicle_desc
@@ -44,3 +45,6 @@ class UserStatus(models.Model):
 class TripReservation(models.Model):
     vehicle = models.ForeignKey(Vehicle)
     odometer = models.IntegerField()
+    # date and time of checkout
+    # user info for driver who checked out vehicle
+    # any other auto populated fields
