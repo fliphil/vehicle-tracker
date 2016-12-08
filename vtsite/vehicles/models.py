@@ -9,15 +9,8 @@ class Vehicle(models.Model):
     # Unique description of the vehicle
     vehicle_desc = models.CharField(max_length=250)
 
-    def __init__(self):
-        models.Model.__init(self)
-
-        # Make an entry in the VehicleStatus table
-        vehicle_status = VehicleStatus(vehicle=self)
-        vehicle_status.save()
-
     def __str__(self):
-        return self.vehicle_desc
+        return str(self.vehicle_desc)
 
     def can_reserve(self):
         """
@@ -39,7 +32,10 @@ class TripReservation(models.Model):
     vehicle = models.ForeignKey(Vehicle)
     odometer = models.IntegerField()
     time_check_out = models.DateTimeField(auto_now_add=True)
-    time_check_in = models.DateTimeField()
+    time_check_in = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.time_check_out) + '-' + str(self.user) + '-' + str(self.vehicle)
 
 
 class VehicleStatus(models.Model):
@@ -48,7 +44,10 @@ class VehicleStatus(models.Model):
     """
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     on_trip = models.BooleanField(default=False)
-    most_recent_trip = models.ForeignKey(TripReservation, null=True)
+    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.vehicle)
 
 
 class UserStatus(models.Model):
@@ -58,4 +57,7 @@ class UserStatus(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     on_trip = models.BooleanField(default=False)
-    most_recent_trip = models.ForeignKey(TripReservation, null=True)
+    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user)

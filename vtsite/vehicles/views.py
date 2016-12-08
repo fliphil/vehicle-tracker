@@ -1,6 +1,7 @@
 import datetime
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Vehicle
 from .models import VehicleStatus
 from .models import UserStatus
@@ -17,11 +18,11 @@ def index(request):
     if request.user.is_authenticated:
         try:
             user_status = UserStatus.objects.get(user=request.user)
-        except:
+        except ObjectDoesNotExist:
             user_status = UserStatus(user=request.user)
             user_status.save()
 
-        if user_status.on_trip == False:
+        if user_status.on_trip is False:
             return HttpResponseRedirect('/vehicles/depart')
         else:
             return HttpResponseRedirect('/vehicles/return')
@@ -34,16 +35,16 @@ def process_departure_form(form_dict, request_user):
     Handle the form received from the departure post request.
     Do some validation and then record the data in a new
     VehicleReservation table entry.
-    :param form_list: Contains a list of multiple form dicts.
+    :param form_dict: Contains a list of multiple form dicts.
     :param request_user: Current User attached to this request.
     :return:
     """
-    vehicle_form_data = form_dict[0].cleaned_data['vehicle'] # because the Vehicle form is the first in the list of forms... will clean this up later
-    dest_form_data = form_dict[1].cleaned_data['destination']
-    odo_form_data = form_dict[2].cleaned_data['odometer']
-    fuel_form_data = form_dict[2].cleaned_data['is_fuel_full']
-    tire_form_data = form_dict[2].cleaned_data['were_tires_inspected']
-    damage_form_data = form_dict[2].cleaned_data['completed_damage_inspection']
+    vehicle_form_data = form_dict['0'].cleaned_data['vehicle'] # because the Vehicle form is the first in the list of forms... will clean this up later
+    dest_form_data = form_dict['1'].cleaned_data['destination']
+    odo_form_data = form_dict['2'].cleaned_data['odometer']
+    fuel_form_data = form_dict['2'].cleaned_data['is_fuel_full']
+    tire_form_data = form_dict['2'].cleaned_data['were_tires_inspected']
+    damage_form_data = form_dict['2'].cleaned_data['completed_damage_inspection']
 
     # Lookup the vehicle from database
     vehicle_entry = Vehicle.objects.get(vehicle_desc=vehicle_form_data)
@@ -70,7 +71,7 @@ def process_departure_form(form_dict, request_user):
     user_status.save()
 
 
-def process_return_form(form_list, request_user):
+def process_return_form(form_dict, request_user):
     """
     Handle the form received from the Return post request.
     Do some validation and then record the data in an existing
@@ -79,11 +80,11 @@ def process_return_form(form_list, request_user):
     :param request_user: Current User attached to this request.
     :return:
     """
-    odo_form_data = form_list[0].cleaned_data['odometer']
-    fuel_form_data = form_list[0].cleaned_data['is_fuel_full']
-    trash_form_data = form_list[0].cleaned_data['trash']
-    damage_form_data = form_list[0].cleaned_data['damage_or_mechanical_problems']
-    comments_form_data = form_list[0].cleaned_data['comments']
+    odo_form_data = form_dict['0'].cleaned_data['odometer']
+    fuel_form_data = form_dict['0'].cleaned_data['is_fuel_full']
+    trash_form_data = form_dict['0'].cleaned_data['trash']
+    damage_form_data = form_dict['0'].cleaned_data['damage_or_mechanical_problems']
+    comments_form_data = form_dict['0'].cleaned_data['comments']
 
     # Get status associated with the user, contains the current trip data
     user_status = UserStatus.objects.get(user=request_user)
@@ -114,26 +115,26 @@ def process_return_form(form_list, request_user):
 class DepartureFormWizard(SessionWizardView):
     template_name = "vehicles/home.html"
 
-    def done(self, form_list, **kwargs):
+    def done(self, form_list, form_dict, **kwargs):
         """
         This method will be invoked after the completion of a multi-step Departure Form.
         :param form_list: list of forms holding data gathered during the multi-step process
         :param kwargs:
         :return:
         """
-        process_departure_form(form_list, request_user=self.request.user)
+        process_departure_form(form_dict, request_user=self.request.user)
         return HttpResponseRedirect('/')
 
 
 class ReturnFormWizard(SessionWizardView):
     template_name = "vehicles/home.html"
 
-    def done(self, form_list, **kwargs):
+    def done(self, form_list, form_dict, **kwargs):
         """
         This method will be invoked after the completion of a multi-step Return Form.
         :param form_list: list of forms holding data gathered during the multi-step process
         :param kwargs:
         :return:
         """
-        process_return_form(form_list, request_user=self.request.user)
+        process_return_form(form_dict, request_user=self.request.user)
         return HttpResponseRedirect('/')
