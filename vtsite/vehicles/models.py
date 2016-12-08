@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Vehicle(models.Model):
@@ -48,6 +50,12 @@ class VehicleStatus(models.Model):
 
     def __str__(self):
         return str(self.vehicle)
+
+    @staticmethod
+    @receiver(post_save, sender=Vehicle)
+    def create_status(sender, instance, created, **kwargs):
+        if created is True:
+            VehicleStatus.objects.create(vehicle=instance)
 
 
 class UserStatus(models.Model):
