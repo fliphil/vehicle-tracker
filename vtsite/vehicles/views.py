@@ -19,8 +19,8 @@ def index(request):
         try:
             user_status = UserStatus.objects.get(user=request.user)
         except ObjectDoesNotExist:
-            user_status = UserStatus(user=request.user)
-            user_status.save()
+            # error should never happen
+            print("error: userstatus does not exist")
 
         if user_status.on_trip is False:
             return HttpResponseRedirect('/vehicles/depart')
