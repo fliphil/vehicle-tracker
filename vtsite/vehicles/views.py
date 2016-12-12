@@ -27,7 +27,8 @@ def index(request):
         else:
             return HttpResponseRedirect('/vehicles/return')
 
-    return render(request, 'vehicles/home.html', {})
+    return HttpResponseRedirect('/')
+
 
 
 def process_departure_form(form_dict, request_user):
