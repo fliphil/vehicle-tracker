@@ -94,3 +94,7 @@ table input, textarea {
   background-color: #efefef;
   border-radius: 4px;
 }
+
+table select {
+  background-color: #ffffff;
+}
