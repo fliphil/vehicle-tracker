@@ -31,7 +31,16 @@ class Vehicle(models.Model):
 class TripReservation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     vehicle = models.ForeignKey(Vehicle)
-    odometer = models.IntegerField()
+    destination = models.CharField(max_length=100)
+    pre_odometer = models.IntegerField()
+    pre_fuel_check = models.BooleanField(default=False)
+    pre_tire_check = models.BooleanField(default=False)
+    pre_damage_check = models.BooleanField(default=False)
+    post_odometer = models.IntegerField(null=True, blank=True)
+    post_fuel_check = models.BooleanField(default=False)
+    post_trash_check = models.BooleanField(default=False)
+    post_damage_check = models.BooleanField(default=False)
+    post_comments = models.CharField(max_length=500, null=True, blank=True)
     time_check_out = models.DateTimeField(auto_now_add=True)
     time_check_in = models.DateTimeField(null=True, blank=True)
 

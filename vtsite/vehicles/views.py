@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -30,7 +30,6 @@ def index(request):
     return HttpResponseRedirect('/')
 
 
-
 def process_departure_form(form_dict, request_user):
     """
     Handle the form received from the departure post request.
@@ -56,10 +55,13 @@ def process_departure_form(form_dict, request_user):
     user_status = UserStatus.objects.get(user=request_user)
 
     # Create a new reservation
-    reservation = TripReservation(user=request_user,
-                                  vehicle=vehicle_entry,
-                                  odometer=odo_form_data)
-    reservation.save()
+    reservation = TripReservation.objects.create(user=request_user,
+                                                 vehicle=vehicle_entry,
+                                                 destination=dest_form_data,
+                                                 pre_odometer=odo_form_data,
+                                                 pre_fuel_check=fuel_form_data,
+                                                 pre_tire_check=tire_form_data,
+                                                 pre_damage_check=damage_form_data)
 
     # Update the vehicles status
     vehicle_status.on_trip = True
@@ -92,16 +94,19 @@ def process_return_form(form_dict, request_user):
 
     if user_status.on_trip is True:
         # Get the foreign key id of the TripReservation
-        user_fk = user_status.most_recent_trip
+        reservation = user_status.most_recent_trip
 
         # Get the TripReservation entry, update, and finally save
-        reservation = TripReservation.objects.get(id=user_fk)
-        reservation.time_check_in = datetime.datetime()
+        reservation.post_odometer = odo_form_data
+        reservation.post_fuel_check = fuel_form_data
+        reservation.post_trash_check = trash_form_data
+        reservation.post_damage_check = damage_form_data
+        reservation.post_comments = comments_form_data
+        reservation.time_check_in = timezone.now()
         reservation.save()
 
         # Now that the vehicle has been returned, update it's status
-        vehicle_fk = reservation.vehicle
-        vehicle = Vehicle.objects.get(id=vehicle_fk)
+        vehicle = reservation.vehicle
         vehicle_status = VehicleStatus.objects.get(vehicle=vehicle)
         vehicle_status.on_trip = False
         vehicle_status.save()
