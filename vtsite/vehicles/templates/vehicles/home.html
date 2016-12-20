@@ -9,33 +9,8 @@
     </div>
 
     <div class="form-container">
+      well okay then
 
-        <p>Step {{ wizard.steps.current|add:"1" }} of {{ wizard.steps.count }}</p>
-        <form action="" method="post">
-            {% csrf_token %}
-            <table>
-              {{ wizard.management_form }}
-              {% if wizard.form.forms %}
-                  {{ wizard.form.management_form }}
-                  {% for form in wizard.form.forms %}
-                      {{ form }}
-                  {% endfor %}
-              {% else %}
-                  {{ wizard.form }}
-              {% endif %}
-            </table>
-
-            {% if wizard.steps.prev %}
-            <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Back</button>
-            {% endif %}
-
-            {% if wizard.steps.next %}
-            <input type="submit" value="Next"/>
-            {% else %}
-            <input type="submit" value="Submit"/>
-            {% endif %}
-
-        </form>
     </div>
 
 </div>

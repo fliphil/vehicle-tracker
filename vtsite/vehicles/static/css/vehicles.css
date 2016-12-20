@@ -98,3 +98,13 @@ table input, textarea {
 table select {
   background-color: #ffffff;
 }
+
+.vehicle-form {
+  /*display: flex;
+  flex-direction: column;*/
+  /*justify-content: center;*/
+}
+
+.vehicle-form > * {
+
+}

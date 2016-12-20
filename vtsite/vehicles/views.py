@@ -6,7 +6,7 @@ from .models import Vehicle
 from .models import VehicleStatus
 from .models import UserStatus
 from .models import TripReservation
-from formtools.wizard.views import SessionWizardView
+from .forms import DepartureForm, ReturnForm
 
 
 def index(request):
@@ -118,29 +118,76 @@ def process_return_form(form_dict, request_user):
         print("error: user should not have gotten here, not on trip")
 
 
-class DepartureFormWizard(SessionWizardView):
-    template_name = "vehicles/home.html"
+def depart(request):
+    """
+    Run this function after a vehicles/checkout_vehicles url redirect.
+    :param request: HTTP request from client
+    :return: HttpResponse with reservation status page
+    """
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = DepartureForm(request.POST)
 
-    def done(self, form_list, form_dict, **kwargs):
-        """
-        This method will be invoked after the completion of a multi-step Departure Form.
-        :param form_list: list of forms holding data gathered during the multi-step process
-        :param kwargs:
-        :return:
-        """
-        process_departure_form(form_dict, request_user=self.request.user)
-        return HttpResponseRedirect('/')
+        # handle the form data
+        receive_checkout_info(form)
+
+        # redirect to a new URL:
+        return HttpResponseRedirect('/vehicles')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = DepartureForm()
+
+    return render(request, 'vehicles/depart.html', {'form': form})
 
 
-class ReturnFormWizard(SessionWizardView):
-    template_name = "vehicles/home.html"
 
-    def done(self, form_list, form_dict, **kwargs):
-        """
-        This method will be invoked after the completion of a multi-step Return Form.
-        :param form_list: list of forms holding data gathered during the multi-step process
-        :param kwargs:
-        :return:
-        """
-        process_return_form(form_dict, request_user=self.request.user)
-        return HttpResponseRedirect('/')
+def returnFromTrip(request):
+    """
+    Run this function after a vehicles/checkout_vehicles url redirect.
+    :param request: HTTP request from client
+    :return: HttpResponse with reservation status page
+    """
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = ReturnForm(request.POST)
+
+        # handle the form data
+        receive_checkout_info(form)
+
+        # redirect to a new URL:
+        return HttpResponseRedirect('/vehicles')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ReturnForm()
+
+    return render(request, 'vehicles/return.html', {'form': form})
+
+
+# class DepartureFormWizard(SessionWizardView):
+#     template_name = "vehicles/home.html"
+#
+#     def done(self, form_list, form_dict, **kwargs):
+#         """
+#         This method will be invoked after the completion of a multi-step Departure Form.
+#         :param form_list: list of forms holding data gathered during the multi-step process
+#         :param kwargs:
+#         :return:
+#         """
+#         process_departure_form(form_dict, request_user=self.request.user)
+#         return HttpResponseRedirect('/')
+#
+#
+# class ReturnFormWizard(SessionWizardView):
+#     template_name = "vehicles/home.html"
+#
+#     def done(self, form_list, form_dict, **kwargs):
+#         """
+#         This method will be invoked after the completion of a multi-step Return Form.
+#         :param form_list: list of forms holding data gathered during the multi-step process
+#         :param kwargs:
+#         :return:
+#         """
+#         process_return_form(form_dict, request_user=self.request.user)
+#         return HttpResponseRedirect('/')
