@@ -99,12 +99,7 @@ table select {
   background-color: #ffffff;
 }
 
-.vehicle-form {
-  /*display: flex;
-  flex-direction: column;*/
-  /*justify-content: center;*/
-}
-
-.vehicle-form > * {
-
+.trip-title {
+  padding-top: 24px;
+  margin-bottom: 24px;
 }

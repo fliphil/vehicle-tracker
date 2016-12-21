@@ -9,7 +9,22 @@
     </div>
 
     <div class="form-container">
-      well okay then
+      {% if user_status.on_trip %}
+      <h3>Your current trip:</h3>
+      <h4>Vehicle: <span>{{ trip.vehicle }}</span></h4>
+      <h4>Destination: <span>{{ trip.destination }}</span></h4>
+      <h4>Began Trip At  <span>{{ trip.time_check_out }}</span></h4>
+      <button>Finish This Trip</button>
+      {% else %}
+      <h3>Begin A New Trip:</h3>
+      <h4>Select a vehicle:</h4>
+      <select>
+        {% for vehicle in vehicles %}
+        <option value="{{ vehicle }}">{{ vehicle }}</option>
+        {% endfor %}
+      </select>
+      <input id="new-trip-button" type="submit" value="Start New Trip" />
+      {% endif %}
 
     </div>
 

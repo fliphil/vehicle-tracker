@@ -1,7 +1,7 @@
 from django import forms
 
 
-class DepartureForm(forms.Form):
+class TripBeginForm(forms.Form):
     vehicle = forms.ChoiceField(label='Vehicle', choices=[(x, x) for x in range(1, 11)])
     destination = forms.CharField(label='Destination', max_length=50, required=True)
     odometer = forms.IntegerField(min_value=0, max_value=500000, required=True)
@@ -10,7 +10,7 @@ class DepartureForm(forms.Form):
     completed_damage_inspection = forms.BooleanField(label='Checked for vehicle damage', required=True)
 
 
-class ReturnForm(forms.Form):
+class TripFinishForm(forms.Form):
     odometer = forms.IntegerField(min_value=0,
                                   max_value=500000,
                                   required=True)
