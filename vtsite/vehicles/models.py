@@ -7,8 +7,8 @@ class Vehicle(models.Model):
     Store vehicle data
     """
     # Unique description of the vehicle
-    vehicle_desc = models.CharField(max_length=250)
-    # vehicle_photo = models.ImageField(upload_to=None)
+    desc = models.CharField(max_length=50)
+    # photo = models.ImageField(default='')
 
     def __str__(self):
         return str(self.vehicle_desc)
@@ -29,8 +29,23 @@ class Vehicle(models.Model):
 
 
 class TripReservation(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    vehicle = models.ForeignKey(Vehicle)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.SET_NULL,
+                             blank=True,
+                             null=True)
+    user_first_name = models.CharField(max_length=30,
+                                       blank=True,
+                                       null=True)
+    user_last_name = models.CharField(max_length=30,
+                                      blank=True,
+                                      null=True)
+    vehicle = models.ForeignKey(Vehicle,
+                                on_delete=models.SET_NULL,
+                                blank=True,
+                                null=True)
+    vehicle_desc = models.CharField(max_length=50,
+                                    blank=True,
+                                    null=True)
     destination = models.CharField(max_length=100)
     pre_odometer = models.IntegerField()
     pre_fuel_check = models.BooleanField(default=False)
@@ -45,7 +60,10 @@ class TripReservation(models.Model):
     time_check_in = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.time_check_out) + '-' + str(self.user) + '-' + str(self.vehicle)
+        return str(self.time_check_out) + '-' +\
+               str(self.user_first_name) + '_' + \
+               str(self.user_last_name) + '-' + \
+               str(self.vehicle_desc)
 
 
 class VehicleStatus(models.Model):

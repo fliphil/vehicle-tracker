@@ -19,13 +19,12 @@ def index(request):
     if request.user.is_authenticated:
         try:
             user_status = UserStatus.objects.get(user=request.user)
-        except: #ObjectDoesNotExist:
+        except ObjectDoesNotExist:
             # error should never happen
             print("error: userstatus does not exist")
-            user_status = UserStatus(user=request.user)
 
         if user_status.on_trip is False:
-            vehicles = ["123xyz", "abc123", "123456"]
+            vehicles = Vehicle.objects.all()
             trip = TripReservation(user=request.user)
         else:
             trip = user_status.most_recent_trip
@@ -52,7 +51,7 @@ def process_trip_begin(form, request_user):
     damage_form_data = form.cleaned_data['completed_damage_inspection']
 
     # Lookup the vehicle from database
-    vehicle_entry = Vehicle.objects.get(vehicle_desc=vehicle_form_data)
+    vehicle_entry = Vehicle.objects.get(desc=vehicle_form_data)
     # Get the status associated with the vehicle
     vehicle_status = VehicleStatus.objects.get(vehicle=vehicle_entry)
 

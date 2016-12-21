@@ -6,4 +6,4 @@ class VehiclesConfig(AppConfig):
 
     def ready(self):
         # Import the signal handlers
-        import django.core.signals
+        from .signals import handlers

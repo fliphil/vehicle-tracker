@@ -20,7 +20,7 @@
       <h4>Select a vehicle:</h4>
       <select>
         {% for vehicle in vehicles %}
-        <option value="{{ vehicle }}">{{ vehicle }}</option>
+        <option value="{{ vehicle.id }}">{{ vehicle.desc }}</option>
         {% endfor %}
       </select>
       <input id="new-trip-button" type="submit" value="Start New Trip" />
