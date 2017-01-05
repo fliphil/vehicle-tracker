@@ -1,0 +1,8 @@
+[
+  {
+    "model": "vehicles.Vehicle",
+    "fields": {
+      "vehicle_desc": "1"
+    }
+  }
+]

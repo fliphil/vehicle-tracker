@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -6,10 +7,11 @@ class Vehicle(models.Model):
     Store vehicle data
     """
     # Unique description of the vehicle
-    vehicle_desc = models.CharField(max_length=250)
+    desc = models.CharField(max_length=50)
+    # photo = models.ImageField(default='')
 
     def __str__(self):
-        return self.vehicle_desc
+        return str(self.vehicle_desc)
 
     def can_reserve(self):
         """
@@ -26,35 +28,42 @@ class Vehicle(models.Model):
             return True
 
 
-class User(models.Model):
-    """
-    Store user data
-    """
-    # Username for the account
-    user_name = models.CharField(max_length=20)
-    # Hash digest of the user account password
-    user_password_hash = models.CharField(max_length=64)
-    # Real-life first name of the user
-    user_first_name = models.CharField(max_length=20)
-    # Real-life last name of the user
-    user_last_name = models.CharField(max_length=20)
+class TripReservation(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.SET_NULL,
+                             blank=True,
+                             null=True)
+    user_first_name = models.CharField(max_length=30,
+                                       blank=True,
+                                       null=True)
+    user_last_name = models.CharField(max_length=30,
+                                      blank=True,
+                                      null=True)
+    vehicle = models.ForeignKey(Vehicle,
+                                on_delete=models.SET_NULL,
+                                blank=True,
+                                null=True)
+    vehicle_desc = models.CharField(max_length=50,
+                                    blank=True,
+                                    null=True)
+    destination = models.CharField(max_length=100)
+    pre_odometer = models.IntegerField()
+    pre_fuel_check = models.BooleanField(default=False)
+    pre_tire_check = models.BooleanField(default=False)
+    pre_damage_check = models.BooleanField(default=False)
+    post_odometer = models.IntegerField(null=True, blank=True)
+    post_fuel_check = models.BooleanField(default=False)
+    post_trash_check = models.BooleanField(default=False)
+    post_damage_check = models.BooleanField(default=False)
+    post_comments = models.CharField(max_length=500, null=True, blank=True)
+    time_check_out = models.DateTimeField(auto_now_add=True)
+    time_check_in = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.user_first_name + ' ' + self.user_last_name
-
-    def can_reserve(self):
-        """
-        Check whether this user is able to reserve a vehicle.
-        Only 1 vehicle can be reserved by a user at a time.
-        :return: True or False
-        """
-        # Find the entry for this user
-        status = UserStatus.objects.get(user=self)
-
-        if status.on_trip is True:
-            return False
-        else:
-            return True
+        return str(self.time_check_out) + '-' +\
+               str(self.user_first_name) + '_' + \
+               str(self.user_last_name) + '-' + \
+               str(self.vehicle_desc)
 
 
 class VehicleStatus(models.Model):
@@ -62,40 +71,21 @@ class VehicleStatus(models.Model):
     Track various status items related to a vehicle
     """
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
-    on_trip = models.BooleanField
+    on_trip = models.BooleanField(default=False)
+    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.vehicle)
 
 
 class UserStatus(models.Model):
     """
     Track various status items related to a user
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    on_trip = models.BooleanField
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    on_trip = models.BooleanField(default=False)
+    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
 
-
-class TripReservation(models.Model):
-    YES_NO = (
-            ('Y', 'Yes'),
-            ('N', 'No'),
-    )
-    vehicle = models.ForeignKey(Vehicle)
-    user = models.ForeignKey(User)
-    #check_out_dt = models.DateField()
-    #check_in_dt = models.DateField()
-    odometer = models.IntegerField()
-    """
-    destination = models.CharField(max_length=250)
-    comments_check_out = models.CharField(max_length=250)
-    comments_check_in = models.CharField(max_length=250)
-    tires_inspected = models.CharField(max_length=1, choices=YES_NO)
-    damage_check_out = models.CharField(max_length=1, choices=YES_NO)
-    damage_check_in = models.CharField(max_length=1, choices=YES_NO)
-    fuel_full_check_out = models.CharField(max_length=1, choices=YES_NO)
-    fuel_full_check_in = models.CharField(max_length=1, choices=YES_NO)
-    vehicle_clean = models.CharField(max_length=1, choices=YES_NO)
-    post_accident = models.CharField(max_length=250)
-    """
-
-
-
-
+    def __str__(self):
+        return str(self.user)

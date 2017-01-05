@@ -1,12 +1,32 @@
-{% extends 'vehicles/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 <div>
-  <div class="col-xs-offset-1 col-xs-10">
-    <h3>Welcome to the Food Bank Vehicle Tracker<br/>What would you like to do?</h3>
-    <br/>
-    <a href="{% url 'vehicles:checkout_vehicle' %}" role="button" class="btn btn-primary">Check-out Vehicle</a>
-    <a href="{% url 'vehicles:checkin_vehicle' %}" role="button" class="btn btn-primary">Check-in Vehicle</a>
- </div>
+    <div class="row">
+        <div class="col-xs-offset-1 col-xs-10">
+          <h3>Welcome to the Food Bank<br/>Vehicle Tracker</h3><br/>
+       </div>
+    </div>
+
+    <div class="form-container">
+      {% if user_status.on_trip %}
+      <h3>Your current trip:</h3>
+      <h4>Vehicle: <span>{{ trip.vehicle }}</span></h4>
+      <h4>Destination: <span>{{ trip.destination }}</span></h4>
+      <h4>Began Trip At  <span>{{ trip.time_check_out }}</span></h4>
+      <button>Finish This Trip</button>
+      {% else %}
+      <h3>Begin A New Trip:</h3>
+      <h4>Select a vehicle:</h4>
+      <select>
+        {% for vehicle in vehicles %}
+        <option value="{{ vehicle.id }}">{{ vehicle.desc }}</option>
+        {% endfor %}
+      </select>
+      <input id="new-trip-button" type="submit" value="Start New Trip" />
+      {% endif %}
+
+    </div>
+
 </div>
 {% endblock %}
