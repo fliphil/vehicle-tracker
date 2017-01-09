@@ -17,17 +17,24 @@ def index(request):
     :return:
     """
     if request.user.is_authenticated:
+        user_status = None
         try:
             user_status = UserStatus.objects.get(user=request.user)
         except ObjectDoesNotExist:
             # error should never happen
             print("error: userstatus does not exist")
 
-        if user_status.on_trip is False:
+        if user_status is not None:
+            if user_status.on_trip is False:
+                vehicles = Vehicle.objects.all()
+                trip = TripReservation(user=request.user)
+            else:
+                trip = user_status.most_recent_trip
+        else:
+            user_status = UserStatus(user=request.user)
+            user_status.on_trip = False
             vehicles = Vehicle.objects.all()
             trip = TripReservation(user=request.user)
-        else:
-            trip = user_status.most_recent_trip
 
         return render(request, 'vehicles/home.html', {'user_status': user_status, 'trip': trip, 'vehicles': vehicles})
 

@@ -9,4 +9,13 @@
         <input id="checkout-submit" type="submit" value="Submit" />
     </form>
 </div>
+<script>
+  window.onload = function() {
+      var location_input = document.getElementById('id_destination');
+      if(location_input) {
+        var autocomplete = new google.maps.places.Autocomplete(location_input);
+      }
+  }
+</script>
+
 {% endblock %}

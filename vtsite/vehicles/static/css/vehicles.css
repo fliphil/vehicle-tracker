@@ -81,6 +81,10 @@ td input {
   margin-right: 0 !important;
 }
 
+#id_destination {
+    margin-left: 0 !important;
+}
+
 table, table * {
   border-radius: 4px;
 }
