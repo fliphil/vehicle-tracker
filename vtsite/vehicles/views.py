@@ -17,26 +17,26 @@ def index(request):
     :return:
     """
     if request.user.is_authenticated:
-        user_status = None
         try:
             user_status = UserStatus.objects.get(user=request.user)
         except ObjectDoesNotExist:
-            # error should never happen
+            """
+            Error should never happen because a UserStatus
+            entry is automatically made for each new user
+            by vehicle/signals/handlers.py
+            """
             print("error: userstatus does not exist")
 
-        if user_status is not None:
-            if user_status.on_trip is False:
-                vehicles = Vehicle.objects.all()
-                trip = TripReservation(user=request.user)
-            else:
-                trip = user_status.most_recent_trip
+        if user_status.on_trip is False:
+            vehicles_stats = VehicleStatus.objects.all()
+            print(vehicles_stats[0])
+            trip = None
         else:
-            user_status = UserStatus(user=request.user)
-            user_status.on_trip = False
-            vehicles = Vehicle.objects.all()
-            trip = TripReservation(user=request.user)
+            trip = user_status.most_recent_trip
 
-        return render(request, 'vehicles/home.html', {'user_status': user_status, 'trip': trip, 'vehicles': vehicles})
+        return render(request, 'vehicles/home.html', {'user_status': user_status,
+                                                      'trip': trip,
+                                                      'vehicles_stats': vehicles_stats})
 
     return HttpResponseRedirect('/')
 

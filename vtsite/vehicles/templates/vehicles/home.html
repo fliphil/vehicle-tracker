@@ -19,8 +19,10 @@
       <h3>Begin A New Trip:</h3>
       <h4>Select a vehicle:</h4>
       <select>
-        {% for vehicle in vehicles %}
-        <option value="{{ vehicle.id }}">{{ vehicle.desc }}</option>
+        {% for stat in vehicles_stats %}
+          {% if not stat.on_trip %}
+            <option value="{{ stat.vehicle.id }}">{{ stat.vehicle.desc }}</option>
+          {% endif %}
         {% endfor %}
       </select>
       <input id="new-trip-button" type="submit" value="Start New Trip" />

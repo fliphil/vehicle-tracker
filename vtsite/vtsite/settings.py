@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'formtools',
     'vehicles.apps.VehiclesConfig',
     'django.contrib.admin',
     'django.contrib.auth',

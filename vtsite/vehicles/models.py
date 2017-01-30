@@ -11,7 +11,7 @@ class Vehicle(models.Model):
     # photo = models.ImageField(default='')
 
     def __str__(self):
-        return str(self.vehicle_desc)
+        return str(self.desc)
 
     def can_reserve(self):
         """
