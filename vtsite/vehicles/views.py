@@ -29,7 +29,6 @@ def index(request):
 
         if user_status.on_trip is False:
             vehicles_stats = VehicleStatus.objects.all()
-            print(vehicles_stats[0])
             trip = None
         else:
             trip = user_status.most_recent_trip
