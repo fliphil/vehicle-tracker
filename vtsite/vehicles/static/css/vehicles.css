@@ -107,3 +107,7 @@ table select {
   padding-top: 24px;
   margin-bottom: 24px;
 }
+
+.vehicle-image {
+  max-width: 164px;
+}

@@ -21,7 +21,7 @@
         {% for stat in vehicles_stats %}
           {% if not stat.on_trip %}
             <h6>{{ stat.vehicle.photo.url }}</h6>
-            <img src="{{ stat.vehicle.photo.url }}">
+            <img class="vehicle-image" src="{{ stat.vehicle.photo.url }}">
           {% endif %}
         {% endfor %}
         <input id="new-trip-button" type="submit" value="Start New Trip" />
