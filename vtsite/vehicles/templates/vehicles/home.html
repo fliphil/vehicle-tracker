@@ -16,16 +16,15 @@
       <h4>Began Trip At  <span>{{ trip.time_check_out }}</span></h4>
       <button>Finish This Trip</button>
       {% else %}
-      <h3>Begin A New Trip:</h3>
-      <h4>Select a vehicle:</h4>
-      <select>
+        <h3>Begin A New Trip:</h3>
+        <h4>Select a vehicle:</h4>
         {% for stat in vehicles_stats %}
           {% if not stat.on_trip %}
-            <option value="{{ stat.vehicle.id }}">{{ stat.vehicle.desc }}</option>
+            <h6>{{ stat.vehicle.photo.url }}</h6>
+            <img src="{{ stat.vehicle.photo.url }}">
           {% endif %}
         {% endfor %}
-      </select>
-      <input id="new-trip-button" type="submit" value="Start New Trip" />
+        <input id="new-trip-button" type="submit" value="Start New Trip" />
       {% endif %}
 
     </div>
