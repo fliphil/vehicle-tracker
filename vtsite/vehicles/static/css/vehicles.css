@@ -109,5 +109,18 @@ table select {
 }
 
 .vehicle-image {
-  max-width: 164px;
+  max-width: 180px;
+  max-height: 180px;
+  margin-right: 24px;
+}
+
+#new-trip-button {
+  margin-top: 20px;
+}
+
+.vehicle-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
