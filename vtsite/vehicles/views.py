@@ -8,6 +8,13 @@ from .models import UserStatus
 from .models import TripReservation
 from .forms import TripBeginForm, TripFinishForm
 from django.contrib.auth.decorators import login_required
+from enum import Enum
+
+
+class ViewCodes(Enum):
+    OK = 0
+    FAIL = 1
+    RACE_COND = 2
 
 
 def index(request):
@@ -64,6 +71,10 @@ def process_trip_begin(form, request_user):
     # Get the status associated with user
     user_status = UserStatus.objects.get(user=request_user)
 
+    # Check for on_trip race condition
+    if vehicle_status.on_trip is True:
+        return ViewCodes.RACE_COND
+
     # Create a new reservation
     reservation = TripReservation.objects.create(user=request_user,
                                                  vehicle=vehicle_entry,
@@ -82,6 +93,8 @@ def process_trip_begin(form, request_user):
     user_status.on_trip = True
     user_status.most_recent_trip = reservation
     user_status.save()
+
+    return ViewCodes.OK
 
 
 def process_trip_finish(form, request_user):
@@ -140,10 +153,15 @@ def trip_begin(request):
         form = TripBeginForm(request.POST)
 
         # handle the form data
-        process_trip_begin(form, request.user)
+        rc = process_trip_begin(form, request.user)
 
-        # redirect to a new URL:
-        return HttpResponseRedirect('/vehicles')
+        if rc == ViewCodes.OK:
+            # redirect to a new URL:
+            return HttpResponseRedirect('/vehicles')
+        elif rc == ViewCodes.RACE_COND:
+            # Vehicle is no longer available, someone else beat you to the punch!
+            # TODO modal message saying the vehicle is no longer available, redirect to vehicle selection
+            pass
 
     # if a GET (or any other method) we'll create a blank form
     else:
