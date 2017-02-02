@@ -2,7 +2,7 @@ from django import forms
 
 
 class TripBeginForm(forms.Form):
-    vehicle = forms.ChoiceField(label='Vehicle', choices=[(x, x) for x in range(1, 11)])
+    vehicle = forms.CharField(label='Vehicle ID', max_length=50, required=True)
     destination = forms.CharField(label='Destination', max_length=50, required=True)
     odometer = forms.IntegerField(min_value=0, max_value=500000, required=True)
     is_fuel_full = forms.BooleanField(label='Fuel Tank Filled', required=True)
