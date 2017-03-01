@@ -2,6 +2,9 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseServerError
+from django.http import HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Vehicle
 from .models import VehicleStatus
@@ -18,11 +21,12 @@ class ViewCodes(Enum):
     RACE_COND = 2
 
 
+# FIXME do we need to add login_required here?
 def index(request):
     """
     The home page for any user that is signed in.
     :param request: Http GET request
-    :return:
+    :return: HttpResponse
     """
     if request.user.is_authenticated:
         try:
@@ -33,7 +37,8 @@ def index(request):
             entry is automatically made for each new user
             by vehicle/signals/handlers.py
             """
-            print("error: userstatus does not exist")
+            return HttpResponseServerError(content="Problem with database, there is not UserStatus " +
+                                           "entry for this User!")
 
         if user_status.on_trip is False:
             vehicles_stats = VehicleStatus.objects.all()
@@ -50,10 +55,10 @@ def index(request):
 
 def process_trip_begin(form, request_user):
     """
-    Handle the form received from the departure post request.
+    Handle the form received from the TripBegin post request.
     Do some validation and then record the data in a new
-    VehicleReservation table entry.
-    :param form: Form data.
+    TripReservation table entry.
+    :param form: Dictionary containing key/value pairs from the filled out form.
     :param request_user: Current User attached to this request.
     :return:
     """
@@ -100,10 +105,10 @@ def process_trip_begin(form, request_user):
 
 def process_trip_finish(form, request_user):
     """
-    Handle the form received from the Return post request.
+    Handle the form received from the TripFinish post request.
     Do some validation and then record the data in an existing
-    VehicleReservation table entry.
-    :param form_list: Contains a list of multiple form dicts.
+    TripReservation table entry.
+    :param form: Dictionary containing key/value pairs from the filled out form.
     :param request_user: Current User attached to this request.
     :return:
     """
@@ -138,8 +143,14 @@ def process_trip_finish(form, request_user):
         # Now that the User has returned, update their status
         user_status.on_trip = False
         user_status.save()
+
+        return ViewCodes.OK
     else:
-        print("error: user should not have gotten here, not on trip")
+        """
+        Error user should never have gotten to this point because they
+        are not on a trip.
+        """
+        return ViewCodes.FAIL
 
 
 @login_required
@@ -147,7 +158,7 @@ def trip_begin(request):
     """
     Run this function after a vehicles/trip_begin url redirect.
     :param request: HTTP request from client
-    :return: HttpResponse with reservation status page
+    :return: HttpResponse
     """
     if request.method == 'POST':
         if 'flag' in request.POST:
@@ -158,7 +169,7 @@ def trip_begin(request):
                 form = TripBeginForm(initial={'vehicle': id_vehicle})
                 return render(request, 'vehicles/trip_begin.html', {'form': form})
             else:
-                return HttpResponse(content="error: error: invalid 'flag' value")
+                return HttpResponseBadRequest(content="invalid value for POST parameter 'flag'")
         else:
             # create a form instance and populate it with data from the request:
             form = TripBeginForm(request.POST)
@@ -176,7 +187,7 @@ def trip_begin(request):
 
     # GET (or any other method) is not supported
     else:
-        return HttpResponse(content="error: only POST is supported")
+        return HttpResponseNotAllowed(permitted_methods=['POST', ])
 
 
 @login_required
@@ -184,20 +195,26 @@ def trip_finish(request):
     """
     Run this function after a vehicles/trip_finish url redirect.
     :param request: HTTP request from client
-    :return: HttpResponse with reservation status page
+    :return: HttpResponse
     """
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = TripFinishForm(request.POST)
 
         # handle the form data
-        process_trip_finish(form, request.user)
+        rc = process_trip_finish(form, request.user)
 
-        # redirect to a new URL:
-        return HttpResponseRedirect('/vehicles')
+        if rc == ViewCodes.OK:
+            # Successful termination of trip, redirect to a new URL
+            return HttpResponseRedirect('/vehicles')
+        elif rc == ViewCodes.FAIL:
+            return HttpResponseServerError(content="The specified user does not have any current TripReservations. " +
+                                           "Could not 'finish' trip.")
 
-    # if a GET (or any other method) we'll create a blank form
-    else:
+    elif request.method == 'GET':
+        # if a GET request, we'll create a blank form
         form = TripFinishForm()
+        return render(request, 'vehicles/trip_finish.html', {'form': form})
 
-    return render(request, 'vehicles/trip_finish.html', {'form': form})
+    else:
+        return HttpResponseNotAllowed(permitted_methods=['POST'])
