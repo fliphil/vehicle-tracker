@@ -8,10 +8,11 @@ class Vehicle(models.Model):
     """
     # Unique description of the vehicle
     desc = models.CharField(max_length=50)
-    # photo = models.ImageField(default='')
+    # Photo of the vehicle, relative to MEDIA_URL
+    photo = models.ImageField(upload_to='photos', default='photos/no-image.jpg')
 
     def __str__(self):
-        return str(self.vehicle_desc)
+        return str(self.desc)
 
     def can_reserve(self):
         """

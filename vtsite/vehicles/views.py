@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Vehicle
 from .models import VehicleStatus
@@ -8,6 +9,13 @@ from .models import UserStatus
 from .models import TripReservation
 from .forms import TripBeginForm, TripFinishForm
 from django.contrib.auth.decorators import login_required
+from enum import Enum
+
+
+class ViewCodes(Enum):
+    OK = 0
+    FAIL = 1
+    RACE_COND = 2
 
 
 def index(request):
@@ -20,16 +28,22 @@ def index(request):
         try:
             user_status = UserStatus.objects.get(user=request.user)
         except ObjectDoesNotExist:
-            # error should never happen
+            """
+            Error should never happen because a UserStatus
+            entry is automatically made for each new user
+            by vehicle/signals/handlers.py
+            """
             print("error: userstatus does not exist")
 
         if user_status.on_trip is False:
-            vehicles = Vehicle.objects.all()
-            trip = TripReservation(user=request.user)
+            vehicles_stats = VehicleStatus.objects.all()
+            trip = None
         else:
             trip = user_status.most_recent_trip
 
-        return render(request, 'vehicles/home.html', {'user_status': user_status, 'trip': trip, 'vehicles': vehicles})
+        return render(request, 'vehicles/home.html', {'user_status': user_status,
+                                                      'trip': trip,
+                                                      'vehicles_stats': vehicles_stats})
 
     return HttpResponseRedirect('/')
 
@@ -39,11 +53,11 @@ def process_trip_begin(form, request_user):
     Handle the form received from the departure post request.
     Do some validation and then record the data in a new
     VehicleReservation table entry.
-    :param form_dict: Contains a list of multiple form dicts.
+    :param form: Form data.
     :param request_user: Current User attached to this request.
     :return:
     """
-    vehicle_form_data = form.cleaned_data['vehicle'] # because the Vehicle form is the first in the list of forms... will clean this up later
+    vehicle_form_data = form.cleaned_data['vehicle']
     dest_form_data = form.cleaned_data['destination']
     odo_form_data = form.cleaned_data['odometer']
     fuel_form_data = form.cleaned_data['is_fuel_full']
@@ -57,6 +71,10 @@ def process_trip_begin(form, request_user):
 
     # Get the status associated with user
     user_status = UserStatus.objects.get(user=request_user)
+
+    # Check for on_trip race condition
+    if vehicle_status.on_trip is True:
+        return ViewCodes.RACE_COND
 
     # Create a new reservation
     reservation = TripReservation.objects.create(user=request_user,
@@ -76,6 +94,8 @@ def process_trip_begin(form, request_user):
     user_status.on_trip = True
     user_status.most_recent_trip = reservation
     user_status.save()
+
+    return ViewCodes.OK
 
 
 def process_trip_finish(form, request_user):
@@ -130,20 +150,33 @@ def trip_begin(request):
     :return: HttpResponse with reservation status page
     """
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = TripBeginForm(request.POST)
+        if 'flag' in request.POST:
+            flag = request.POST['flag']
+            if flag == "clicked":
+                # Request containing the id of vehicle that was clicked by user
+                id_vehicle = request.POST['id_vehicle']
+                form = TripBeginForm(initial={'vehicle': id_vehicle})
+                return render(request, 'vehicles/trip_begin.html', {'form': form})
+            else:
+                return HttpResponse(content="error: error: invalid 'flag' value")
+        else:
+            # create a form instance and populate it with data from the request:
+            form = TripBeginForm(request.POST)
 
-        # handle the form data
-        process_trip_begin(form, request.user)
+            # handle the form data
+            rc = process_trip_begin(form, request.user)
 
-        # redirect to a new URL:
-        return HttpResponseRedirect('/vehicles')
+            if rc == ViewCodes.OK:
+                # redirect to a new URL:
+                return HttpResponseRedirect('/vehicles')
+            elif rc == ViewCodes.RACE_COND:
+                # Vehicle is no longer available, someone else beat you to the punch!
+                # TODO modal message saying the vehicle is no longer available, redirect to vehicle selection
+                pass
 
-    # if a GET (or any other method) we'll create a blank form
+    # GET (or any other method) is not supported
     else:
-        form = TripBeginForm()
-
-    return render(request, 'vehicles/trip_begin.html', {'form': form})
+        return HttpResponse(content="error: only POST is supported")
 
 
 @login_required

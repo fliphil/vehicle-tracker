@@ -16,14 +16,24 @@
       <h4>Began Trip At  <span>{{ trip.time_check_out }}</span></h4>
       <button>Finish This Trip</button>
       {% else %}
-      <h3>Begin A New Trip:</h3>
-      <h4>Select a vehicle:</h4>
-      <select>
-        {% for vehicle in vehicles %}
-        <option value="{{ vehicle.id }}">{{ vehicle.desc }}</option>
+        <h3>Begin A New Trip</h3>
+        <h3>Select a vehicle:</h3>
+        <div class="vehicle-container">
+        {% for stat in vehicles_stats %}
+          {% if not stat.on_trip %}
+            <form name="click_vehicle" method="post" action="{% url 'vehicles:trip_begin' %}">
+                {% csrf_token %}
+                <input type="hidden" name="flag" value="clicked" />
+                <input type="hidden" name="id_vehicle" value="{{ stat.vehicle.desc }}">
+                <a href="#" onclick="document.forms[0].submit();return false;">
+                    <img class="vehicle-image" src="{{ stat.vehicle.photo.url }}">
+                </a>
+            </form>
+            <h4 class="vehicle-desc">{{ stat.vehicle.desc }}</h4>
+          {% endif %}
         {% endfor %}
-      </select>
-      <input id="new-trip-button" type="submit" value="Start New Trip" />
+        </div>
+        <input id="new-trip-button" type="submit" value="Start New Trip" />
       {% endif %}
 
     </div>
