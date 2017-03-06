@@ -21,36 +21,41 @@ class ViewCodes(Enum):
     RACE_COND = 2
 
 
-# FIXME do we need to add login_required here?
+@login_required
 def index(request):
     """
     The home page for any user that is signed in.
     :param request: Http GET request
     :return: HttpResponse
     """
-    if request.user.is_authenticated:
-        try:
-            user_status = UserStatus.objects.get(user=request.user)
-        except ObjectDoesNotExist:
-            """
-            Error should never happen because a UserStatus
-            entry is automatically made for each new user
-            by vehicle/signals/handlers.py
-            """
-            return HttpResponseServerError(content="Problem with database, there is not UserStatus " +
-                                           "entry for this User!")
+    try:
+        user_status = UserStatus.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        """
+        Error should never happen because a UserStatus
+        entry is automatically made for each new user
+        by vehicle/signals/handlers.py
+        """
+        return HttpResponseServerError(content="Problem with database, there is not UserStatus " +
+                                       "entry for this User!")
 
-        if user_status.on_trip is False:
-            vehicles_stats = VehicleStatus.objects.all()
-            trip = None
-        else:
-            trip = user_status.most_recent_trip
+    if user_status.on_trip is False:
+        all_vehicles_stats = VehicleStatus.objects.all()
 
-        return render(request, 'vehicles/home.html', {'user_status': user_status,
-                                                      'trip': trip,
-                                                      'vehicles_stats': vehicles_stats})
+        no_avail_vehicles = True
+        for stat in all_vehicles_stats:
+            # Check to see if there is at least 1 available vehicle
+            if stat.on_trip is False:
+                no_avail_vehicles = False
 
-    return HttpResponseRedirect('/')
+        trip = None
+    else:
+        trip = user_status.most_recent_trip
+
+    return render(request, 'vehicles/home.html', {'user_status': user_status,
+                                                  'trip': trip,
+                                                  'all_vehicles_stats': all_vehicles_stats,
+                                                  'no_avail_vehicles': no_avail_vehicles})
 
 
 def process_trip_begin(form, request_user):
@@ -217,4 +222,4 @@ def trip_finish(request):
         return render(request, 'vehicles/trip_finish.html', {'form': form})
 
     else:
-        return HttpResponseNotAllowed(permitted_methods=['POST'])
+        return HttpResponseNotAllowed(permitted_methods=['POST', 'GET'])
