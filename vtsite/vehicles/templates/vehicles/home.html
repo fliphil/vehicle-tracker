@@ -15,7 +15,7 @@
         <h4>Vehicle: <span>{{ trip.vehicle }}</span></h4>
         <h4>Destination: <span>{{ trip.destination }}</span></h4>
         <h4>Began trip at: <span>{{ trip.time_check_out }}</span></h4>
-        <button>Finish this trip</button>
+        <a href="/vehicles/trip_finish"><button>Finish this trip</button></a>
       {% else %}
         <!-- Display the ability to start trip -->
         <h3>Begin a New Trip</h3>
