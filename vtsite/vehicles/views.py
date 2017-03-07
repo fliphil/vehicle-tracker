@@ -39,6 +39,7 @@ def index(request):
             vehicles_stats = VehicleStatus.objects.all()
             trip = None
         else:
+            vehicles_stats = None
             trip = user_status.most_recent_trip
 
         return render(request, 'vehicles/home.html', {'user_status': user_status,
@@ -164,7 +165,8 @@ def trip_begin(request):
             form = TripBeginForm(request.POST)
 
             # handle the form data
-            rc = process_trip_begin(form, request.user)
+            if form.is_valid():
+                rc = process_trip_begin(form, request.user)
 
             if rc == ViewCodes.OK:
                 # redirect to a new URL:
