@@ -50,6 +50,8 @@ def index(request):
 
         trip = None
     else:
+        all_vehicles_stats = None
+        no_avail_vehicles = None
         trip = user_status.most_recent_trip
 
     return render(request, 'vehicles/home.html', {'user_status': user_status,
@@ -180,7 +182,8 @@ def trip_begin(request):
             form = TripBeginForm(request.POST)
 
             # handle the form data
-            rc = process_trip_begin(form, request.user)
+            if form.is_valid():
+                rc = process_trip_begin(form, request.user)
 
             if rc == ViewCodes.OK:
                 # redirect to a new URL:
@@ -207,7 +210,8 @@ def trip_finish(request):
         form = TripFinishForm(request.POST)
 
         # handle the form data
-        rc = process_trip_finish(form, request.user)
+        if form.is_valid():
+            rc = process_trip_finish(form, request.user)
 
         if rc == ViewCodes.OK:
             # Successful termination of trip, redirect to a new URL
