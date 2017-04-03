@@ -10,23 +10,10 @@ class Vehicle(models.Model):
     desc = models.CharField(max_length=50)
     # Photo of the vehicle, relative to MEDIA_URL
     photo = models.ImageField(upload_to='photos', default='photos/no-image.jpg')
+    odometer = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.desc)
-
-    def can_reserve(self):
-        """
-        Check whether this user is able to reserve a vehicle.
-        Only 1 vehicle can be reserved by a user at a time.
-        :return: True or False
-        """
-        # Find the entry for this user
-        status = UserStatus.objects.get(user=self)
-
-        if status.on_trip is True:
-            return False
-        else:
-            return True
 
 
 class TripReservation(models.Model):
@@ -47,7 +34,7 @@ class TripReservation(models.Model):
     vehicle_desc = models.CharField(max_length=50,
                                     blank=True,
                                     null=True)
-    destination = models.CharField(max_length=100)
+    destination = models.CharField(max_length=200)
     pre_odometer = models.IntegerField()
     pre_fuel_check = models.BooleanField(default=False)
     pre_tire_check = models.BooleanField(default=False)

@@ -141,8 +141,16 @@ def process_trip_finish(form, request_user):
         reservation.time_check_in = timezone.now()
         reservation.save()
 
-        # Now that the vehicle has been returned, update it's status
+        """
+        Now that the vehicle has been returned, update it.
+        The check for odometer is performed in the form clean() function to make
+        sure that it is not less than any previous value in history.
+        """
         vehicle = reservation.vehicle
+        vehicle.odometer = reservation.post_odometer
+        vehicle.save()
+
+        # Update the vehicle's status
         vehicle_status = VehicleStatus.objects.get(vehicle=vehicle)
         vehicle_status.on_trip = False
         vehicle_status.save()
@@ -173,7 +181,15 @@ def trip_begin(request):
             if flag == "clicked":
                 # Request containing the id of vehicle that was clicked by user
                 id_vehicle = request.POST['id_vehicle']
-                form = TripBeginForm(initial={'vehicle': id_vehicle})
+
+                # Retrieve the existing odometer entry to pre-fill in the form
+                vehicle = Vehicle.objects.get(desc=id_vehicle)
+                odo = vehicle.odometer
+
+                # Pre-fill part of the form with items we already know
+                form = TripBeginForm(initial={'vehicle': id_vehicle,
+                                              'odometer': odo})
+
                 return render(request, 'vehicles/trip_begin.html', {'form': form})
             else:
                 return HttpResponseBadRequest(content="invalid value for POST parameter 'flag'")
@@ -183,7 +199,11 @@ def trip_begin(request):
 
             # handle the form data
             if form.is_valid():
+                # The entered form data is valid, so continue processing.
                 rc = process_trip_begin(form, request.user)
+            else:
+                # Render the form with the validation errors
+                return render(request, 'vehicles/trip_begin.html', {'form': form})
 
             if rc == ViewCodes.OK:
                 # redirect to a new URL:
@@ -212,6 +232,9 @@ def trip_finish(request):
         # handle the form data
         if form.is_valid():
             rc = process_trip_finish(form, request.user)
+        else:
+            # Render the form with the validation errors
+            return render(request, 'vehicles/trip_finish.html', {'form': form})
 
         if rc == ViewCodes.OK:
             # Successful termination of trip, redirect to a new URL
@@ -221,8 +244,21 @@ def trip_finish(request):
                                            "Could not 'finish' trip.")
 
     elif request.method == 'GET':
-        # if a GET request, we'll create a blank form
-        form = TripFinishForm()
+        """
+        Create a new form
+        """
+        # Get status associated with the user, contains the current trip data
+        user_status = UserStatus.objects.get(user=request.user)
+
+        # Get the current trip
+        reservation = user_status.most_recent_trip
+        vehicle_id = reservation.vehicle.desc
+        pre_odometer = reservation.pre_odometer
+
+        # Pre-fill part of the form with items we already know
+        form = TripFinishForm(initial={'vehicle_id': vehicle_id,
+                                       'odometer': pre_odometer})
+
         return render(request, 'vehicles/trip_finish.html', {'form': form})
 
     else:
