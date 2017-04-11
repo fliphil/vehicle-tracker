@@ -1,0 +1,1 @@
+This is only to keep GIT from deleting the static directory for now.

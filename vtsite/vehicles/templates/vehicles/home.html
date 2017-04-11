@@ -10,32 +10,37 @@
 
     <div class="form-container">
       {% if user_status.on_trip %}
-      <h3>Your current trip:</h3>
-      <h4>Vehicle: <span>{{ trip.vehicle }}</span></h4>
-      <h4>Destination: <span>{{ trip.destination }}</span></h4>
-      <h4>Began Trip At  <span>{{ trip.time_check_out }}</span></h4>
-      <button>Finish This Trip</button>
+        <!-- Display the ability to end trip -->
+        <h3>Your current trip:</h3><br/>
+        <h4>Vehicle:  <span>{{ trip.vehicle }}</span></h4>
+        <h4>Destination:  <span>{{ trip.destination }}</span></h4>
+        <h4>Began trip at:  <span>{{ trip.time_check_out }}</span></h4><br/>
+        <a class="button-link" href="{% url 'vehicles:trip_finish' %}"><button>Finish this trip</button></a>
       {% else %}
-        <h3>Begin A New Trip</h3>
-        <h3>Select a vehicle:</h3>
-        <div class="vehicle-container">
-        {% for stat in vehicles_stats %}
-          {% if not stat.on_trip %}
-            <form name="click_vehicle" method="post" action="{% url 'vehicles:trip_begin' %}">
-                {% csrf_token %}
-                <input type="hidden" name="flag" value="clicked" />
-                <input type="hidden" name="id_vehicle" value="{{ stat.vehicle.desc }}">
-                <a href="#" onclick="document.forms[0].submit();return false;">
-                    <img class="vehicle-image" src="{{ stat.vehicle.photo.url }}">
-                </a>
-            </form>
-            <h4 class="vehicle-desc">{{ stat.vehicle.desc }}</h4>
-          {% endif %}
-        {% endfor %}
-        </div>
-        <input id="new-trip-button" type="submit" value="Start New Trip" />
+        <!-- Display the ability to start trip -->
+        <h3>Begin a New Trip</h3>
+          {% if no_avail_vehicles %}
+              <h3>No vehicles currently available.</h3>
+          {% else %}
+              <h3>Click a vehicle:</h3></br>
+                <div class="vehicle-container">
+                {% for stat in all_vehicles_stats %}
+                    <!-- Iterate showing all available vehicles -->
+                    {% if not stat.on_trip %}
+                    <div class="vehicle">
+                      <form name="click_vehicle" method="post" action="{% url 'vehicles:trip_begin' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="flag" value="clicked" />
+                          <input type="hidden" name="id_vehicle" value="{{ stat.vehicle.desc }}">
+                          <input type="image" class="vehicle-image" src="{{ stat.vehicle.photo.url }}">
+                      </form>
+                      <h4 class="vehicle-desc">{{ stat.vehicle.desc }}</h4>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
       {% endif %}
-
     </div>
 
 </div>
