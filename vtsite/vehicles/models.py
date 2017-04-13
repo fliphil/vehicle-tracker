@@ -6,7 +6,7 @@ class Vehicle(models.Model):
     """
     Store vehicle data
     """
-    # Unique description of the vehicle
+    # Description of the vehicle
     desc = models.CharField(max_length=50)
     # Photo of the vehicle, relative to MEDIA_URL
     photo = models.ImageField(upload_to='photos', default='photos/no-image.jpg')
