@@ -31,7 +31,7 @@
                       <form name="click_vehicle" method="post" action="{% url 'vehicles:trip_begin' %}">
                           {% csrf_token %}
                           <input type="hidden" name="flag" value="clicked" />
-                          <input type="hidden" name="id_vehicle" value="{{ stat.vehicle.desc }}">
+                          <input type="hidden" name="id_vehicle" value="{{ stat.vehicle.plate }}">
                           <input type="image" class="vehicle-image" src="{{ stat.vehicle.photo.url }}">
                       </form>
                       <h4 class="vehicle-desc">{{ stat.vehicle.desc }}</h4>

@@ -9,7 +9,8 @@ from .models import TripReservation
 
 class VehicleTestCase(TestCase):
     def setUp(self):
-        Vehicle.objects.create(desc="Corolla",
+        Vehicle.objects.create(plate="VGNFW",
+                               desc="Corolla",
                                odometer=100)
 
     def test_sanity(self):
@@ -17,30 +18,30 @@ class VehicleTestCase(TestCase):
         Test the sanity of Vehicle entry creation.
         :return:
         """
-        car = Vehicle.objects.get(desc="Corolla")
+        car = Vehicle.objects.get(plate="VGNFW")
 
         self.assertEqual(car.odometer, 100)
         self.assertIsNotNone(car.photo)
-        self.assertEqual(str(car), "Corolla")
+        self.assertEqual(str(car), "VGNFW-Corolla")
 
     def test_vehicle_status(self):
         """
         Ensure a valid VehicleStatus table entry was automatically created.
         :return:
         """
-        car = Vehicle.objects.get(desc="Corolla")
+        car = Vehicle.objects.get(plate="VGNFW")
         status = VehicleStatus.objects.get(vehicle=car)
 
         self.assertFalse(status.on_trip)
         self.assertIsNone(status.most_recent_trip)
 
     def test_delete(self):
-        car = Vehicle.objects.get(desc="Corolla")
+        car = Vehicle.objects.get(plate="VGNFW")
         car.delete()
 
         # Make sure the user was deleted
         try:
-            Vehicle.objects.get(desc="Corolla")
+            Vehicle.objects.get(plate="VGNFW")
             deleted = False
         except ObjectDoesNotExist:
             deleted = True
@@ -109,13 +110,14 @@ class UserTestCase(TestCase):
 
 class TripTestCase(TestCase):
     def setUp(self):
-        vehicle = Vehicle.objects.create(desc="Ferrari",
+        vehicle = Vehicle.objects.create(plate="7AZ2DB",
+                                         desc="Ferrari",
                                          odometer=500)
 
         user = User.objects.create(username="coolalice",
-                            first_name="Alice",
-                            last_name="Wonder",
-                            password="dummy")
+                                   first_name="Alice",
+                                   last_name="Wonder",
+                                   password="dummy")
 
         TripReservation.objects.create(user=user,
                                        vehicle=vehicle,
@@ -123,21 +125,33 @@ class TripTestCase(TestCase):
 
     def test_sanity(self):
         """
-        Test the sanity of Vehicle entry creation.
+        Test the sanity of TripReservation entry creation.
         :return:
         """
         trip = TripReservation.objects.get(pk=1)
 
         user = User.objects.get(username="coolalice")
-        vehicle = Vehicle.objects.get(desc="Ferrari")
+        vehicle = Vehicle.objects.get(plate="7AZ2DB")
 
         self.assertEqual(trip.user, user)
         self.assertEqual(trip.user_first_name, user.first_name)
         self.assertEqual(trip.user_last_name, user.last_name)
         self.assertEqual(trip.vehicle, vehicle)
+        self.assertEqual(trip.vehicle_plate, vehicle.plate)
         self.assertEqual(trip.vehicle_desc, vehicle.desc)
         self.assertIsNotNone(trip.time_check_out)
         self.assertEqual(str(trip), str(trip.time_check_out) + '-' + \
                                     str(trip.user_first_name) + '_' + \
                                     str(trip.user_last_name) + '-' + \
-                                    str(trip.vehicle_desc))
+                                    str(trip.vehicle_plate))
+
+    def test_delete(self):
+        trip = TripReservation.objects.get(pk=1)
+
+        user = User.objects.get(username="coolalice")
+        vehicle = Vehicle.objects.get(plate="7AZ2DB")
+
+        # Make sure TripReservation deletion does not cascade to user and vehicle.
+        trip.delete()
+        self.assertIsNotNone(user)
+        self.assertIsNotNone(vehicle)

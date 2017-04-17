@@ -77,7 +77,7 @@ def process_trip_begin(form, request_user):
     damage_form_data = form.cleaned_data['completed_damage_inspection']
 
     # Lookup the vehicle from database
-    vehicle_entry = Vehicle.objects.get(desc=vehicle_form_data)
+    vehicle_entry = Vehicle.objects.get(plate=vehicle_form_data)
     # Get the status associated with the vehicle
     vehicle_status = VehicleStatus.objects.get(vehicle=vehicle_entry)
 
@@ -183,7 +183,7 @@ def trip_begin(request):
                 id_vehicle = request.POST['id_vehicle']
 
                 # Retrieve the existing odometer entry to pre-fill in the form
-                vehicle = Vehicle.objects.get(desc=id_vehicle)
+                vehicle = Vehicle.objects.get(plate=id_vehicle)
                 odo = vehicle.odometer
 
                 # Pre-fill part of the form with items we already know
@@ -252,7 +252,7 @@ def trip_finish(request):
 
         # Get the current trip
         reservation = user_status.most_recent_trip
-        vehicle_id = reservation.vehicle.desc
+        vehicle_id = reservation.vehicle.plate
         pre_odometer = reservation.pre_odometer
 
         # Pre-fill part of the form with items we already know

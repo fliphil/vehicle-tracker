@@ -6,14 +6,17 @@ class Vehicle(models.Model):
     """
     Store vehicle data
     """
+    # Unique ID of the vehicle
+    plate = models.CharField(max_length=20)
     # Description of the vehicle
     desc = models.CharField(max_length=50)
     # Photo of the vehicle, relative to MEDIA_URL
     photo = models.ImageField(upload_to='photos', default='photos/no-image.jpg')
+    # The odometer value of the vehicle
     odometer = models.IntegerField(default=0)
 
     def __str__(self):
-        return str(self.desc)
+        return str(self.plate) + "-" + str(self.desc)
 
 
 class TripReservation(models.Model):
@@ -31,6 +34,9 @@ class TripReservation(models.Model):
                                 on_delete=models.SET_NULL,
                                 blank=True,
                                 null=True)
+    vehicle_plate = models.CharField(max_length=20,
+                                     blank=True,
+                                     null=True)
     vehicle_desc = models.CharField(max_length=50,
                                     blank=True,
                                     null=True)
@@ -51,7 +57,7 @@ class TripReservation(models.Model):
         return str(self.time_check_out) + '-' +\
                str(self.user_first_name) + '_' + \
                str(self.user_last_name) + '-' + \
-               str(self.vehicle_desc)
+               str(self.vehicle_plate)
 
 
 class VehicleStatus(models.Model):
