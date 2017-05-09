@@ -1,7 +1,6 @@
 from django.utils import timezone
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.http import HttpResponse
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseServerError
 from django.http import HttpResponseBadRequest
@@ -215,7 +214,7 @@ def trip_begin(request):
 
     # GET (or any other method) is not supported
     else:
-        return HttpResponseNotAllowed(permitted_methods=['POST', ])
+        return HttpResponseNotAllowed(content='Only POST requests are supported. Please select vehicle from home page.', permitted_methods=['POST', ])
 
 
 @login_required
@@ -240,7 +239,7 @@ def trip_finish(request):
             # Successful termination of trip, redirect to a new URL
             return HttpResponseRedirect('/vehicles')
         elif rc == ViewCodes.FAIL:
-            return HttpResponseServerError(content="The specified user does not have any current TripReservations. " +
+            return HttpResponseServerError(content="The current user does not have any TripReservations. " +
                                            "Could not 'finish' trip.")
 
     elif request.method == 'GET':
@@ -249,9 +248,14 @@ def trip_finish(request):
         """
         # Get status associated with the user, contains the current trip data
         user_status = UserStatus.objects.get(user=request.user)
+        if user_status.on_trip is False:
+            return HttpResponseServerError(content="The current user does not have any TripReservations. " +
+                                                   "Could not 'finish' trip.")
 
         # Get the current trip
         reservation = user_status.most_recent_trip
+
+        # Get the vehicle information
         vehicle_id = reservation.vehicle.plate
         pre_odometer = reservation.pre_odometer
 
