@@ -209,12 +209,15 @@ def trip_begin(request):
                 return HttpResponseRedirect('/vehicles')
             elif rc == ViewCodes.RACE_COND:
                 # Vehicle is no longer available, someone else beat you to the punch!
-                # TODO modal message saying the vehicle is no longer available, redirect to vehicle selection
-                pass
+                return HttpResponseRedirect('/vehicles/race_cond')
 
     # GET (or any other method) is not supported
     else:
         return HttpResponseNotAllowed(content='Only POST requests are supported. Please select vehicle from home page.', permitted_methods=['POST', ])
+
+
+def race_cond(request):
+    return render(request, 'vehicles/race_cond.html')
 
 
 @login_required
