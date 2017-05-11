@@ -26,3 +26,24 @@ class AuthenticationTests(TestCase):
         response = self.client.get(reverse('vehicles:index'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "vehicles/home.html")
+
+
+class TripBeginTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='user', password='pass')
+        login_successful = self.client.login(username=self.user.username, password='pass')
+        self.assertTrue(login_successful)
+
+    def test_not_post(self):
+        """Only PUT request is allowed"""
+        response = self.client.get(reverse('vehicles:trip_begin'))
+        self.assertEqual(response.status_code, 405)
+
+        response = self.client.head(reverse('vehicles:trip_begin'))
+        self.assertEqual(response.status_code, 405)
+
+        response = self.client.delete(reverse('vehicles:trip_begin'))
+        self.assertEqual(response.status_code, 405)
+
+        response = self.client.options(reverse('vehicles:trip_begin'))
+        self.assertEqual(response.status_code, 405)
