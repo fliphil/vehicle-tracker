@@ -28,6 +28,7 @@ def init_trip_reserve(sender, instance, created, **kwargs):
 
         instance.user_first_name = user.first_name
         instance.user_last_name = user.last_name
+        instance.vehicle_plate = vehicle.plate
         instance.vehicle_desc = vehicle.desc
 
         # Not an infinite loop because this signal requires 'created'

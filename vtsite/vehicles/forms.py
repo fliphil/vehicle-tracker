@@ -4,7 +4,7 @@ from .models import VehicleStatus
 
 
 class TripBeginForm(forms.Form):
-    vehicle = forms.CharField(label='Vehicle ID', max_length=50, required=True)
+    vehicle = forms.CharField(label='License Plate', max_length=20, required=True)
     destination = forms.CharField(label='Destination', max_length=200, required=True)
     odometer = forms.IntegerField(min_value=0, max_value=500000, required=True)
     is_fuel_full = forms.BooleanField(label='Fuel Tank Filled', required=True)
@@ -22,7 +22,7 @@ class TripBeginForm(forms.Form):
         clean_odometer = cleaned_data.get("odometer")
 
         # Retrieve the existing vehicle database entry.
-        vehicle_entry = Vehicle.objects.get(desc=clean_vehicle)
+        vehicle_entry = Vehicle.objects.get(plate=clean_vehicle)
 
         # Get the last known value for the odometer.
         prev_odometer = vehicle_entry.odometer
@@ -37,7 +37,7 @@ class TripBeginForm(forms.Form):
 
 
 class TripFinishForm(forms.Form):
-    vehicle_id = forms.CharField(widget=forms.HiddenInput(), max_length=50, required=True)
+    vehicle_id = forms.CharField(widget=forms.HiddenInput(), max_length=20, required=True)
     odometer = forms.IntegerField(min_value=0,
                                   max_value=500000,
                                   required=True)
@@ -63,7 +63,7 @@ class TripFinishForm(forms.Form):
         clean_post_odometer = cleaned_data.get("odometer")
 
         # Retrieve the current trip.
-        vehicle_entry = Vehicle.objects.get(desc=clean_vehicle)
+        vehicle_entry = Vehicle.objects.get(plate=clean_vehicle)
         vehicle_status_entry = VehicleStatus.objects.get(vehicle=vehicle_entry)
         trip_reservation_entry = vehicle_status_entry.most_recent_trip
 
