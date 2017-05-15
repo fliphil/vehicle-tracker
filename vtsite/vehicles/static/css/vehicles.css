@@ -1,3 +1,18 @@
+body{
+  background:repeating-linear-gradient(90deg, #f0f0f0 0, #f0f0f0 5%, transparent 0, transparent 50%) 0 / 15px 15px ,
+    repeating-linear-gradient(180deg, #f0f0f0 0, #f0f0f0 5%, transparent 0, transparent 50%) 0 / 15px 15px;
+}
+
+.row {
+  margin: 0 !important;
+}
+
+@media(max-width: 660px) {
+  .form-container {
+    padding: 10px;
+  }
+}
+
 .main {
   margin-top: 60px;
   margin-bottom: 120px;
@@ -49,6 +64,7 @@ table {
   margin-bottom: 2vw;
   width: 80vw;
   max-width: 480px;
+  background: white;
 }
 
 tr {
@@ -145,6 +161,7 @@ table select {
   border-radius: 10px;
   padding: 8px;
   margin: 12px;
+  background: white;
 }
 
 .vehicle:hover {
