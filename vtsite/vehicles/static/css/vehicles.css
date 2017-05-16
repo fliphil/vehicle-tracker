@@ -1,3 +1,18 @@
+body{
+  background:repeating-linear-gradient(90deg, #f0f0f0 0, #f0f0f0 5%, transparent 0, transparent 50%) 0 / 15px 15px ,
+    repeating-linear-gradient(180deg, #f0f0f0 0, #f0f0f0 5%, transparent 0, transparent 50%) 0 / 15px 15px;
+}
+
+.row {
+  margin: 0 !important;
+}
+
+@media(max-width: 660px) {
+  .form-container {
+    padding: 10px;
+  }
+}
+
 .main {
   margin-top: 60px;
   margin-bottom: 120px;
@@ -49,6 +64,7 @@ table {
   margin-bottom: 2vw;
   width: 80vw;
   max-width: 480px;
+  background: white;
 }
 
 tr {
@@ -118,8 +134,11 @@ table select {
 }
 
 .vehicle-image {
-  height: 180px;
+  height: auto;
+  width: auto;
   margin: auto;
+  max-height: 360px;
+  max-width: 360px;
 }
 
 #new-trip-button {
@@ -142,6 +161,7 @@ table select {
   border-radius: 10px;
   padding: 8px;
   margin: 12px;
+  background: white;
 }
 
 .vehicle:hover {
@@ -161,4 +181,41 @@ table select {
 
 .button-link button:hover {
   background-color: #e1e1e1;
+}
+
+#modal {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  height: auto;
+  width: 52vw;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px #d3d3d3;
+}
+
+#modal h3 {
+  padding-top: 8vh;
+  padding-left: 6vw;
+  padding-right: 6vw;
+}
+
+#modal a {
+  text-decoration: none;
+}
+
+#modal input[type=button] {
+  color: black;
+  border-radius: 4px;
+  border: 1px solid green;
+  padding: 10px 16px 10px 16px;
+  float: right;
+  margin-right: 5.5vw;
+  margin-top: 5vh;
+  margin-bottom: 4vh;
+  background-color: transparent;
+  font-size: 18px;
+  box-shadow: 2px 2px 4px #d3d3d3;
 }
