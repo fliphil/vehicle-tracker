@@ -2,7 +2,7 @@
 
 {% block content %}
 <div>
-    <h3 class="trip-title">Finish A Trip</h3>
+    <h3 class="trip-title">Finish Trip</h3>
     <form class="vehicle-form" action="{% url 'vehicles:trip_finish' %}" method="post">
         {% csrf_token %}
         <table>{{ form.as_table }}</table>
