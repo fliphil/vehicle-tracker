@@ -23,6 +23,7 @@ body{
 
 .btn {
   border-color: #5e5e5e;
+  background-color: #eee;
 }
 
 li {
@@ -133,19 +134,17 @@ table select {
   box-shadow: 4px 4px 8px #ddd;
 }
 
-.button-link {
+/*.button-link {
   color: black;
-}
+}*/
 
-.button-link button {
-  border: 1px solid #ddd;
-  border-radius: 6px;
+/*.button-link button {
   background-color: #eee;
 }
 
 .button-link button:hover {
   background-color: #e1e1e1;
-}
+}*/
 
 #modal {
   position: absolute;
