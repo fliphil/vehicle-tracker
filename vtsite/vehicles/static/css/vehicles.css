@@ -17,8 +17,13 @@ body{
   margin-top: 60px;
   margin-bottom: 120px;
   text-align: center;
+  height: 86vh;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.btn {
+  border-color: #5e5e5e;
 }
 
 li {
