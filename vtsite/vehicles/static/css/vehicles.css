@@ -17,19 +17,8 @@ body{
   margin-top: 60px;
   margin-bottom: 120px;
   text-align: center;
-  overflow: scroll;
-}
-
-.btn {
-  font-size: 17px;
-  margin: 1vw;
-  background-color: #568E2D;
-  border-color: #568E2D;
-}
-
-.btn:hover {
-  background-color: #488120;
-  border-color: #488120;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 li {
@@ -93,12 +82,6 @@ table, table * {
 
 table input, textarea {
   border: 1.5px solid #aaaaaa;
-}
-
-*[type=submit] {
-  border: 1.5px solid #aaaaaa;
-  background-color: #efefef;
-  border-radius: 4px;
 }
 
 table select {
