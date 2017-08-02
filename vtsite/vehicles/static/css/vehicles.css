@@ -17,8 +17,7 @@ body{
   margin-top: 60px;
   margin-bottom: 120px;
   text-align: center;
-  height: 86vh;
-  overflow-y: scroll;
+  overflow-y: visible;
   overflow-x: hidden;
 }
 
