@@ -1,5 +1,6 @@
 from django.utils import timezone
 from django.shortcuts import render
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotAllowed
 from django.http import HttpResponseServerError
@@ -206,10 +207,10 @@ def trip_begin(request):
 
             if rc == ViewCodes.OK:
                 # redirect to a new URL:
-                return HttpResponseRedirect('/vehicles')
+                return HttpResponseRedirect(reverse('vehicles:index'))
             elif rc == ViewCodes.RACE_COND:
                 # Vehicle is no longer available, someone else beat you to the punch!
-                return HttpResponseRedirect('/vehicles/race_cond')
+                return HttpResponseRedirect(reverse('vehicles:race_cond'))
 
     # GET (or any other method) is not supported
     else:
@@ -240,7 +241,7 @@ def trip_finish(request):
 
         if rc == ViewCodes.OK:
             # Successful termination of trip, redirect to a new URL
-            return HttpResponseRedirect('/vehicles')
+            return HttpResponseRedirect(reverse('vehicles:index'))
         elif rc == ViewCodes.FAIL:
             return HttpResponseServerError(content="The current user does not have any TripReservations. " +
                                            "Could not 'finish' trip.")

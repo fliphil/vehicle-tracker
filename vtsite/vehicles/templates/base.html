@@ -20,15 +20,18 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Food Bank</a>
+          <a class="navbar-brand" href="#" id="brand-logo">
+            <img src="{% static 'img/NCFoodBankLogo.png' %}" width="72" alt="">
+          </a>
+          <a class="navbar-brand" href="{% url 'vehicles:index' %}">Home</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_superuser %}
-            <li class=""><a href="/admin">Admin</a></li>
+            <li class=""><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
             {% if user.is_authenticated %}
-            <li class=""><a href="/logout">Logout</a></li>
+            <li class=""><a href="{% url 'logout' %}">Logout</a></li>
             {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
@@ -40,16 +43,10 @@
       {% endblock %}
     </div>
 
-    <div class="footer">
-      <img class="logo" src="{% static 'img/logo.png' %}">
-      <p class="footer-text">Fighting hunger in 34 counties...<br/>so no one goes hungry.</p>
-    </div>
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="http://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places"></script>
-  <script src="{% static 'lib/jquery.geocomplete.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places"></script>
+    <script src="{% static 'lib/jquery.geocomplete.min.js' %}"></script>
 
 </body>
 </html>
