@@ -66,7 +66,7 @@ class VehicleStatus(models.Model):
     """
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     on_trip = models.BooleanField(default=False)
-    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
+    most_recent_trip = models.ForeignKey(TripReservation, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return str(self.vehicle)
@@ -79,7 +79,7 @@ class UserStatus(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     on_trip = models.BooleanField(default=False)
-    most_recent_trip = models.ForeignKey(TripReservation, null=True, blank=True)
+    most_recent_trip = models.ForeignKey(TripReservation, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
