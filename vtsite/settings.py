@@ -16,22 +16,36 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# SECURITY WARNING: don't run with debug turned on in production!
+PRODUCTION = True
+
+if PRODUCTION:
+    DEBUG = False
+else:
+    DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'b@_qkmx*c&*uasb&r_d5r-fbeh-@)-3#pi#z+hco4o64)zo4ty'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if DEBUG:
+    SECRET_KEY = "^#b**m08rn4_^yclokd(*ct&ncc5p0otv_se72m7gg#rz_0w9h"
+else:
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 ALLOWED_HOSTS = []
+
+# Make sure all SSL security is enabled in production
+if PRODUCTION:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE =True
+    CSRF_COOKIE_SECURE = True
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'storages',
     'vehicles.apps.VehiclesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,11 +131,24 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATIC_URL = '/static/'
+#
+# AWS S3 storage for media (user uploaded files)
+#
+if PRODUCTION:
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    DEFAULT_FILE_STORAGE = 'vtsite.storage_backends.MediaStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
+
+#
+# Serve static files from local server using Whitenoise
+#
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = 'static/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -132,11 +159,11 @@ STATICFILES_DIRS = (
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/vehicles'
 
+# Automatically set variables for Heroku
 django_heroku.settings(locals())
