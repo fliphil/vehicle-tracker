@@ -13,6 +13,8 @@ pillow = "*"
 pytz = "*"
 django-heroku = "*"
 gunicorn = "*"
+"boto3" = "*"
+django-storages = "*"
 
 
 [dev-packages]
